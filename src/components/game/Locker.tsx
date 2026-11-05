@@ -87,6 +87,17 @@ export function Locker({ onClose }: { onClose: () => void }) {
 
             {tab === "body" && (
               <>
+                <Label>Position</Label>
+                <div className="grid grid-cols-5 gap-2">
+                  {(["PG", "SG", "SF", "PF", "C"] as const).map((p) => <Chip key={p} on={look.position === p} onClick={() => setLook({ position: p })}>{p}</Chip>)}
+                </div>
+                <Label>Height · {look.height} cm ({Math.floor(look.height / 30.48)}'{Math.round((look.height / 2.54) % 12)}")</Label>
+                <input type="range" min={165} max={230} value={look.height} onChange={(e) => setLook({ height: +e.target.value })} className="w-full accent-[var(--primary)]" />
+                <Label>Weight · {look.weight} kg ({Math.round(look.weight * 2.205)} lbs)</Label>
+                <input type="range" min={60} max={150} value={look.weight} onChange={(e) => setLook({ weight: +e.target.value })} className="w-full accent-[var(--primary)]" />
+                <div className="mt-2 rounded-xl bg-surface-2 px-3 py-2 text-[11px] text-muted-foreground">
+                  Build: <b className="text-foreground">{(() => { const b = look.weight / (look.height / 100) ** 2; return b > 27 ? "Power" : b < 22 ? "Lean" : "Athletic"; })()}</b> · taller players rebound better, lighter ones move faster.
+                </div>
                 <Label>Skin tone</Label>
                 <div className="flex justify-between">
                   {skinTones.map((s) => (

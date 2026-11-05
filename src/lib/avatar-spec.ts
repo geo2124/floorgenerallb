@@ -47,6 +47,9 @@ export const avatarSpecSchema = z.object({
   kneePad: sideEnum,
   legSleeve: sideEnum,
   fingerTape: sideEnum,
+  position: z.enum(["PG","SG","SF","PF","C"]),
+  height: z.number().int().min(165).max(230),
+  weight: z.number().int().min(60).max(150),
 });
 export type AvatarSpec = z.infer<typeof avatarSpecSchema>;
 
@@ -70,7 +73,7 @@ export function buildAvatarPrompt(s: AvatarSpec, hasFaceRef: boolean) {
   return [
     "Edit the first image: keep the exact same full-body pose, framing, camera, studio lighting, dark background and reflective floor. Ultra realistic NBA 2K26 video game character render quality, photoreal skin and fabric.",
     hasFaceRef ? "Give the player the face and facial identity of the person in the second image." : "Keep the same face.",
-    `Skin tone: ${skin}. Hairstyle: ${hair}.`,
+    `Body build for a ${s.height} cm, ${s.weight} kg ${s.position} (${s.weight / ((s.height/100)**2) > 27 ? "heavy, broad and muscular frame" : s.weight / ((s.height/100)**2) < 22 ? "lean, slim and long-limbed frame" : "athletic, toned frame"}). Skin tone: ${skin}. Hairstyle: ${hair}.`,
     `Jawline ${lvl(s.jaw, "soft and rounded", "balanced", "very sharp and chiseled")}, ${lvl(s.beard, "clean shaven", "light stubble beard", "full thick beard")}, ${lvl(s.brows, "thin eyebrows", "natural eyebrows", "thick bold eyebrows")}.`,
     `Uniform: ${kitText[s.kit]}, jersey number ${s.number} clearly on the chest. No brand logos, no other text.`,
     s.headwear === "headband" ? "Wearing an athletic headband on the forehead." : s.headwear === "tied-headband" ? "Wearing a ninja-style tied headband with tails." : "No headband.",
