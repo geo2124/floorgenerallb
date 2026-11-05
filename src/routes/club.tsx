@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Shell, SectionTitle } from "@/components/game/Shell";
-import { TeamLogo, logoShapes, logoIcons, logoColors, type LogoSpec } from "@/components/game/TeamLogo";
+import { TeamLogo, logoShapes, logoIcons, logoColors, logoPatterns, logoBorders, logoFonts, type LogoSpec } from "@/components/game/TeamLogo";
 import { Crown, UserMinus, Check, X, LogOut, Search, Shuffle, Trophy, Palette, Plus, Clock, Users, Swords } from "lucide-react";
 
 export const Route = createFileRoute("/club")({
@@ -49,7 +49,7 @@ const standings = [
 function Club() {
   const [tab, setTab] = useState<"team" | "find" | "league">("team");
   const [hasTeam, setHasTeam] = useState(true);
-  const [spec, setSpec] = useState<LogoSpec>({ shape: "shield", icon: "cedar", primary: "#ff6a1a", secondary: "#111111", initials: "CS" });
+  const [spec, setSpec] = useState<LogoSpec>({ shape: "shield", icon: "cedar", primary: "#ff6a1a", secondary: "#111111", initials: "CS", pattern: "sash", accent: "#f5c542", border: "double", arcText: "Beirut" });
   const [name, setName] = useState("Cedar Storm");
   const [roster, setRoster] = useState(initialRoster);
   const [requests, setRequests] = useState(initialRequests);
@@ -232,65 +232,115 @@ function Ovr({ v }: { v: number }) {
 }
 
 function LogoStudio({ spec: s0, name: n0, onSave, onClose }: { spec: LogoSpec; name: string; onSave: (s: LogoSpec, n: string) => void; onClose: () => void }) {
-  const [s, setS] = useState(s0);
+  const [s, setS] = useState<LogoSpec>({ accent: s0.secondary, pattern: "none", border: "single", iconScale: 100, iconRotate: 0, font: "block", gradient: true, arcText: "", ...s0 });
   const [n, setN] = useState(n0);
-  const [tab, setTab] = useState<"shape" | "icon" | "color">("shape");
+  const [tab, setTab] = useState<"shape" | "icon" | "color" | "style" | "text">("shape");
+  const up = (p: Partial<LogoSpec>) => setS({ ...s, ...p });
   const shuffle = () => {
     const pick = <T,>(a: readonly T[]) => a[Math.floor(Math.random() * a.length)]!;
-    setS({ ...s, shape: pick(logoShapes), icon: pick(Object.keys(logoIcons) as (keyof typeof logoIcons)[]), primary: pick(logoColors), secondary: pick(logoColors) });
+    up({ shape: pick(logoShapes), icon: pick(Object.keys(logoIcons) as (keyof typeof logoIcons)[]), primary: pick(logoColors), secondary: pick(logoColors), accent: pick(logoColors), pattern: pick(logoPatterns), border: pick(logoBorders) });
   };
   return (
     <div className="fixed inset-0 z-50 flex justify-center bg-background">
-      <div className="flex w-full max-w-[440px] flex-col overflow-y-auto p-5">
-        <div className="flex items-center justify-between">
+      <div className="flex w-full max-w-[440px] flex-col">
+        <div className="flex items-center justify-between p-4">
           <div className="font-display text-xl font-black uppercase">Logo studio</div>
-          <button onClick={onClose} className="rounded-full bg-surface p-2"><X className="size-4" /></button>
+          <button onClick={onClose} aria-label="Close" className="rounded-full bg-surface p-2"><X className="size-4" /></button>
         </div>
-        <div className="relative my-6 grid place-items-center">
+        <div className="relative grid shrink-0 place-items-center py-2">
           <div className="absolute size-56 rounded-full opacity-30 blur-3xl" style={{ background: s.primary }} />
-          <div className="relative transition-all"><TeamLogo spec={s} size={190} /></div>
+          <TeamLogo spec={s} size={180} />
+          <div className="absolute bottom-0 left-4 flex gap-2">
+            <TeamLogo spec={s} size={36} /><TeamLogo spec={s} size={24} />
+          </div>
           <button onClick={shuffle} className="absolute bottom-0 right-4 flex items-center gap-1 rounded-full bg-surface-2 px-3 py-1.5 text-xs font-bold"><Shuffle className="size-3.5" />Shuffle</button>
         </div>
-        <div className="grid grid-cols-[1fr_90px] gap-2">
-          <input value={n} onChange={(e) => setN(e.target.value)} placeholder="Team name" className="rounded-xl border bg-surface px-3 py-3 font-bold outline-none focus:border-primary" />
-          <input value={s.initials} maxLength={3} onChange={(e) => setS({ ...s, initials: e.target.value })} placeholder="ABC" className="rounded-xl border bg-surface px-3 py-3 text-center font-display font-black uppercase outline-none focus:border-primary" />
-        </div>
-        <div className="mt-4 grid grid-cols-3 rounded-2xl bg-surface p-1">
-          {(["shape", "icon", "color"] as const).map((k) => (
-            <button key={k} onClick={() => setTab(k)} className={`rounded-xl py-2 text-sm font-black uppercase ${tab === k ? "bg-surface-2 text-primary" : "text-muted-foreground"}`}>{k}</button>
+        <div className="mt-3 grid grid-cols-5 gap-1 px-4">
+          {(["shape", "icon", "color", "style", "text"] as const).map((k) => (
+            <button key={k} onClick={() => setTab(k)} className={`rounded-xl py-2 text-[11px] font-black uppercase ${tab === k ? "bg-gradient-primary text-primary-foreground" : "bg-surface text-muted-foreground"}`}>{k}</button>
           ))}
         </div>
-        <div className="mt-3 min-h-40">
+        <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-3">
           {tab === "shape" && (
-            <div className="grid grid-cols-4 gap-2">
-              {logoShapes.map((sh) => <Opt key={sh} on={s.shape === sh} onClick={() => setS({ ...s, shape: sh })}><TeamLogo spec={{ ...s, shape: sh, initials: "" }} size={52} /></Opt>)}
+            <div className="grid grid-cols-3 gap-2">
+              {logoShapes.map((sh) => <Opt key={sh} on={s.shape === sh} onClick={() => up({ shape: sh })}><TeamLogo spec={{ ...s, shape: sh, initials: "", arcText: "" }} size={60} /></Opt>)}
             </div>
           )}
           {tab === "icon" && (
-            <div className="grid grid-cols-5 gap-2">
-              {(Object.keys(logoIcons) as (keyof typeof logoIcons)[]).map((ic) => {
-                const I = logoIcons[ic];
-                return <Opt key={ic} on={s.icon === ic} onClick={() => setS({ ...s, icon: ic })}><I className="size-7" /></Opt>;
-              })}
-            </div>
+            <>
+              <div className="grid grid-cols-6 gap-2">
+                {(Object.keys(logoIcons) as (keyof typeof logoIcons)[]).map((ic) => {
+                  const I = logoIcons[ic];
+                  return <Opt key={ic} on={s.icon === ic} onClick={() => up({ icon: ic })}><I className="size-6" /></Opt>;
+                })}
+              </div>
+              <Range label="Icon size" v={s.iconScale!} min={50} max={150} on={(v) => up({ iconScale: v })} />
+              <Range label="Icon rotation" v={s.iconRotate!} min={-45} max={45} on={(v) => up({ iconRotate: v })} />
+            </>
           )}
           {tab === "color" && (
-            <div className="space-y-3">
-              {(["primary", "secondary"] as const).map((k) => (
+            <div className="space-y-4">
+              {([["primary", "Base"], ["secondary", "Icon & border"], ["accent", "Pattern"]] as const).map(([k, l]) => (
                 <div key={k}>
-                  <div className="mb-1.5 text-xs font-bold uppercase text-muted-foreground">{k}</div>
-                  <div className="grid grid-cols-10 gap-1.5">
+                  <div className="mb-1.5 flex items-center justify-between text-xs font-bold uppercase text-muted-foreground">
+                    {l}
+                    <label className="flex items-center gap-1 normal-case">Custom<input type="color" value={s[k]} onChange={(e) => up({ [k]: e.target.value })} className="size-6 cursor-pointer rounded border-0 bg-transparent" /></label>
+                  </div>
+                  <div className="grid grid-cols-12 gap-1">
                     {logoColors.map((c) => (
-                      <button key={c} aria-label={c} onClick={() => setS({ ...s, [k]: c })} className={`aspect-square rounded-full border-2 ${s[k] === c ? "scale-110 border-primary" : "border-border"}`} style={{ background: c }} />
+                      <button key={c} aria-label={c} onClick={() => up({ [k]: c })} className={`aspect-square rounded-full border-2 ${s[k] === c ? "scale-110 border-primary" : "border-border"}`} style={{ background: c }} />
                     ))}
                   </div>
                 </div>
               ))}
+              <button onClick={() => up({ gradient: !s.gradient })} className="flex w-full items-center justify-between rounded-xl bg-surface p-3 text-sm font-bold">Gradient finish<span className={`flex h-6 w-10 items-center rounded-full p-0.5 ${s.gradient ? "bg-primary" : "bg-surface-2"}`}><span className={`size-5 rounded-full bg-foreground transition ${s.gradient ? "translate-x-4" : ""}`} /></span></button>
+            </div>
+          )}
+          {tab === "style" && (
+            <>
+              <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">Pattern</div>
+              <div className="grid grid-cols-3 gap-2">
+                {logoPatterns.map((p) => <Opt key={p} on={s.pattern === p} onClick={() => up({ pattern: p })}><div className="flex flex-col items-center gap-1"><TeamLogo spec={{ ...s, pattern: p, initials: "", arcText: "" }} size={48} /><span className="text-[10px] font-bold uppercase">{p}</span></div></Opt>)}
+              </div>
+              <div className="mb-2 mt-4 text-xs font-bold uppercase text-muted-foreground">Border</div>
+              <div className="grid grid-cols-4 gap-2">
+                {logoBorders.map((b) => <button key={b} onClick={() => up({ border: b })} className={`rounded-xl py-2.5 text-xs font-black uppercase ${s.border === b ? "bg-primary text-primary-foreground" : "bg-surface"}`}>{b}</button>)}
+              </div>
+            </>
+          )}
+          {tab === "text" && (
+            <div className="space-y-3">
+              <Field label="Team name"><input value={n} onChange={(e) => setN(e.target.value)} className="w-full rounded-xl border bg-surface px-3 py-3 font-bold outline-none focus:border-primary" /></Field>
+              <div className="grid grid-cols-[90px_1fr] gap-2">
+                <Field label="Initials"><input value={s.initials} maxLength={3} onChange={(e) => up({ initials: e.target.value })} className="w-full rounded-xl border bg-surface px-3 py-3 text-center font-display font-black uppercase outline-none focus:border-primary" /></Field>
+                <Field label="Curved banner"><input value={s.arcText} maxLength={16} placeholder="e.g. BEIRUT · EST 2026" onChange={(e) => up({ arcText: e.target.value })} className="w-full rounded-xl border bg-surface px-3 py-3 text-sm font-bold uppercase outline-none focus:border-primary" /></Field>
+              </div>
+              <Field label="Font">
+                <div className="grid grid-cols-3 gap-2">
+                  {(Object.keys(logoFonts) as (keyof typeof logoFonts)[]).map((f) => (
+                    <button key={f} onClick={() => up({ font: f })} className={`rounded-xl py-3 text-lg font-black ${s.font === f ? "bg-primary text-primary-foreground" : "bg-surface"}`} style={{ fontFamily: logoFonts[f] }}>{s.initials || "ABC"}</button>
+                  ))}
+                </div>
+              </Field>
             </div>
           )}
         </div>
-        <button onClick={() => onSave(s, n || "My Team")} className="mt-4 w-full rounded-2xl bg-gradient-primary py-4 font-display text-xl font-black uppercase text-primary-foreground shadow-glow">Save team identity</button>
+        <div className="border-t p-4">
+          <button onClick={() => onSave(s, n || "My Team")} className="w-full rounded-2xl bg-gradient-primary py-4 font-display text-xl font-black uppercase text-primary-foreground shadow-glow">Save team identity</button>
+        </div>
       </div>
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return <div><div className="mb-1.5 text-xs font-bold uppercase text-muted-foreground">{label}</div>{children}</div>;
+}
+function Range({ label, v, min, max, on }: { label: string; v: number; min: number; max: number; on: (n: number) => void }) {
+  return (
+    <div className="mt-4">
+      <div className="mb-1 flex justify-between text-xs font-bold uppercase text-muted-foreground"><span>{label}</span><span>{v}</span></div>
+      <input type="range" min={min} max={max} value={v} onChange={(e) => on(+e.target.value)} className="w-full accent-[var(--primary)]" />
     </div>
   );
 }

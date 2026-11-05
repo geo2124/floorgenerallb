@@ -137,3 +137,16 @@
   animation: sheen 6s linear infinite;
 }
 @keyframes sheen { from { background-position: 150% 0 } to { background-position: -100% 0 } }
+
+@utility scan-line {
+  background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--primary) 45%, transparent), transparent);
+  animation: scan 1.8s ease-in-out infinite;
+}
+@keyframes scan { 0% { top: -10% } 100% { top: 100% } }
+@keyframes holo { 0% { background-position: 0% 50% } 100% { background-position: 200% 50% } }
+@keyframes spin-border { to { --angle: 360deg; } }
+@property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@utility frame-animated {
+  background: conic-gradient(from var(--angle), var(--frame-a), var(--frame-b), var(--frame-a), var(--frame-c), var(--frame-a));
+  animation: spin-border 4s linear infinite;
+}
