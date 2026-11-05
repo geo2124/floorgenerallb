@@ -16,7 +16,7 @@ export function PlayerCard({ name, team, pos, rarity, img, boosts, owned = true,
         {!small && (
           <div className="flex flex-wrap gap-1">
             {boosts.map(([v, k]) => (
-              <span key={k} className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${v.startsWith("-") ? "bg-destructive/20 text-destructive" : "bg-success/20 text-success"}`}>{v} {k}</span>
+              <span key={k} className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${v?.startsWith("-") ? "bg-destructive/20 text-destructive" : "bg-success/20 text-success"}`}>{v} {k}</span>
             ))}
           </div>
         )}

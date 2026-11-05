@@ -113,7 +113,7 @@ function Match({ team, onClose }: { team: boolean; onClose: () => void }) {
         return x + 6;
       });
       setScore(([a, b]): [number, number] => [a + (Math.random() > 0.45 ? Math.ceil(Math.random() * 3) : 0), b + (Math.random() > 0.5 ? Math.ceil(Math.random() * 3) : 0)]);
-      setLog((l) => [feed[Math.floor(Math.random() * feed.length)], ...l].slice(0, 4));
+      setLog((l) => [feed[Math.floor(Math.random() * feed.length)] ?? "", ...l].slice(0, 4));
     }, 450);
     return () => clearInterval(id);
   }, [brk, q]);
