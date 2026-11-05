@@ -1,13 +1,15 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, User, Target, Swords, Shield, Zap, Gem, Plus } from "lucide-react";
+import { Home, User, Target, Swords, Shield, BookImage, ShoppingBag, Zap, Gem, Plus } from "lucide-react";
 import type { ReactNode } from "react";
 
 const tabs = [
   { to: "/", label: "Home", icon: Home },
   { to: "/player", label: "Player", icon: User },
+  { to: "/album", label: "Album", icon: BookImage },
   { to: "/play", label: "Play", icon: Swords, center: true },
   { to: "/predict", label: "Earn", icon: Target },
   { to: "/club", label: "Club", icon: Shield },
+  { to: "/shop", label: "Shop", icon: ShoppingBag },
 ] as const;
 
 export function Shell({ children }: { children: ReactNode }) {
@@ -24,8 +26,8 @@ export function Shell({ children }: { children: ReactNode }) {
               const Icon = t.icon;
               if ("center" in t) {
                 return (
-                  <Link key={t.to} to={t.to} className="-mt-8 flex flex-col items-center gap-1">
-                    <span className="grid size-16 place-items-center rounded-full border-4 border-background bg-gradient-primary text-primary-foreground shadow-glow">
+                  <Link key={t.to} to={t.to} className="-mt-8 flex flex-1 flex-col items-center gap-1">
+                    <span className="grid size-14 place-items-center rounded-full border-4 border-background bg-gradient-primary text-primary-foreground shadow-glow">
                       <Icon className="size-7" strokeWidth={2.4} />
                     </span>
                     <span className="font-display text-xs font-bold uppercase text-primary">{t.label}</span>
@@ -33,9 +35,9 @@ export function Shell({ children }: { children: ReactNode }) {
                 );
               }
               return (
-                <Link key={t.to} to={t.to} className={`flex w-14 flex-col items-center gap-1 py-1 transition ${active ? "text-primary" : "text-muted-foreground"}`}>
+                <Link key={t.to} to={t.to} className={`flex flex-1 flex-col items-center gap-1 py-1 transition ${active ? "text-primary" : "text-muted-foreground"}`}>
                   <Icon className="size-5" strokeWidth={active ? 2.6 : 2} />
-                  <span className="text-[10px] font-semibold uppercase tracking-wider">{t.label}</span>
+                  <span className="text-[9px] font-semibold uppercase tracking-wide">{t.label}</span>
                   <span className={`h-1 w-1 rounded-full ${active ? "bg-primary" : "bg-transparent"}`} />
                 </Link>
               );
@@ -54,7 +56,7 @@ function TopBar() {
         <div className="grid size-9 place-items-center rounded-xl bg-gradient-primary font-display text-lg font-black text-primary-foreground">FG</div>
         <div className="leading-tight">
           <div className="font-display text-sm font-bold uppercase">K. Ayoubi</div>
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Lvl 18 · PG</div>
+          <div className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground">Lvl 18 · PG</div>
         </div>
       </div>
       <div className="flex items-center gap-2">
