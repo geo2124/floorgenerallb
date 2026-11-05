@@ -13,11 +13,11 @@ const tabs = [
 export function Shell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <div className="flex min-h-screen justify-center">
-      <div className="relative min-h-screen w-full max-w-[440px] bg-background pb-28 shadow-card">
+    <div className="flex h-[100dvh] justify-center overflow-hidden">
+      <div className="relative flex h-full w-full max-w-[440px] flex-col bg-background shadow-card">
         <TopBar />
-        <main className="px-4">{children}</main>
-        <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[440px] -translate-x-1/2 px-3 pb-3">
+        <main className="no-scrollbar flex-1 overflow-y-auto overscroll-contain px-4 pb-32">{children}</main>
+        <nav className="absolute inset-x-0 bottom-0 z-40 px-3 pb-3">
           <div className="glass flex items-end justify-between rounded-3xl border px-2 py-2">
             {tabs.map((t) => {
               const active = t.to === "/" ? path === "/" : path.startsWith(t.to) || (t.to === "/predict" && path.startsWith("/trivia"));
