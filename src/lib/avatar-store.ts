@@ -34,6 +34,7 @@ const initial: Look = {
   jaw: 50, beard: 30, brows: 50,
   headwear: "none", eyewear: "none",
   armSleeve: "left", wristband: "none", kneePad: "none", legSleeve: "none", fingerTape: "none",
+  position: "PG", height: 188, weight: 84,
   render: null, dirty: false,
 };
 
