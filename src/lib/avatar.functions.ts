@@ -12,7 +12,7 @@ function toBlob(dataUrl: string) {
   const m = /^data:(image\/[a-z]+);base64,(.+)$/.exec(dataUrl);
   if (!m) throw new Error("Invalid image");
   const bin = Uint8Array.from(atob(m[2]!), (c) => c.charCodeAt(0));
-  return new Blob([bin], { type: m[1] });
+  return new Blob([bin], { type: m[1] ?? "image/jpeg" });
 }
 
 export const renderAvatar = createServerFn({ method: "POST" })

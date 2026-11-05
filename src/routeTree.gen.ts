@@ -15,6 +15,7 @@ import { Route as ClubRouteImport } from './routes/club'
 import { Route as PlayRouteImport } from './routes/play'
 import { Route as PlayerRouteImport } from './routes/player'
 import { Route as PredictRouteImport } from './routes/predict'
+import { Route as ShopRouteImport } from './routes/shop'
 import { Route as TriviaRouteImport } from './routes/trivia'
 
 const IndexRoute = IndexRouteImport.update({
@@ -47,6 +48,11 @@ const PredictRoute = PredictRouteImport.update({
   path: '/predict',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TriviaRoute = TriviaRouteImport.update({
   id: '/trivia',
   path: '/trivia',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/play': typeof PlayRoute
   '/player': typeof PlayerRoute
   '/predict': typeof PredictRoute
+  '/shop': typeof ShopRoute
   '/trivia': typeof TriviaRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/play': typeof PlayRoute
   '/player': typeof PlayerRoute
   '/predict': typeof PredictRoute
+  '/shop': typeof ShopRoute
   '/trivia': typeof TriviaRoute
 }
 export interface FileRoutesById {
@@ -79,14 +87,30 @@ export interface FileRoutesById {
   '/play': typeof PlayRoute
   '/player': typeof PlayerRoute
   '/predict': typeof PredictRoute
+  '/shop': typeof ShopRoute
   '/trivia': typeof TriviaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/album' | '/club' | '/play' | '/player' | '/predict' | '/trivia'
+    | '/'
+    | '/album'
+    | '/club'
+    | '/play'
+    | '/player'
+    | '/predict'
+    | '/shop'
+    | '/trivia'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/album' | '/club' | '/play' | '/player' | '/predict' | '/trivia'
+  to:
+    | '/'
+    | '/album'
+    | '/club'
+    | '/play'
+    | '/player'
+    | '/predict'
+    | '/shop'
+    | '/trivia'
   id:
     | '__root__'
     | '/'
@@ -95,6 +119,7 @@ export interface FileRouteTypes {
     | '/play'
     | '/player'
     | '/predict'
+    | '/shop'
     | '/trivia'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +130,7 @@ export interface RootRouteChildren {
   PlayRoute: typeof PlayRoute
   PlayerRoute: typeof PlayerRoute
   PredictRoute: typeof PredictRoute
+  ShopRoute: typeof ShopRoute
   TriviaRoute: typeof TriviaRoute
 }
 
@@ -152,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PredictRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trivia': {
       id: '/trivia'
       path: '/trivia'
@@ -169,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlayRoute: PlayRoute,
   PlayerRoute: PlayerRoute,
   PredictRoute: PredictRoute,
+  ShopRoute: ShopRoute,
   TriviaRoute: TriviaRoute,
 }
 export const routeTree = rootRouteImport
