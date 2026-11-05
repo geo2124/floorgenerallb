@@ -1,6 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Home, User, Target, Swords, Shield, BookImage, ShoppingBag, Zap, Gem, Plus } from "lucide-react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { useProfile, shortName } from "@/lib/profile-store";
+import { useLook } from "@/lib/avatar-store";
+import { ProfileEditor } from "./ProfileEditor";
+import logo from "@/assets/tfg-logo.jpg.asset.json";
 
 const tabs = [
   { to: "/", label: "Home", icon: Home },
@@ -50,15 +54,26 @@ export function Shell({ children }: { children: ReactNode }) {
 }
 
 function TopBar() {
+  const p = useProfile();
+  const look = useLook();
+  const [edit, setEdit] = useState(false);
   return (
-    <header className="glass z-30 flex shrink-0 items-center justify-between border-b px-4 py-3">
-      <div className="flex items-center gap-2">
-        <div className="grid size-9 place-items-center rounded-xl bg-gradient-primary font-display text-lg font-black text-primary-foreground">FG</div>
-        <div className="leading-tight">
-          <div className="font-display text-sm font-bold uppercase">K. Ayoubi</div>
-          <div className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground">Lvl 18 · PG</div>
-        </div>
+    <header className="glass z-30 flex shrink-0 items-center justify-between border-b px-3 py-2">
+      <div className="flex items-center gap-1.5">
+        <Link to="/" aria-label="The Floor General home" className="size-11 shrink-0 overflow-hidden rounded-xl">
+          <img src={logo.url} alt="The Floor General" className="h-full w-full scale-[1.75] object-cover" />
+        </Link>
+        <button onClick={() => setEdit(true)} className="flex items-center gap-2 rounded-full py-1 pl-1 pr-2 text-left hover:bg-surface-2">
+          <span className="size-8 overflow-hidden rounded-full border-2 border-primary bg-surface-2">
+            {p.photo ? <img src={p.photo} alt="" className="h-full w-full object-cover" /> : <span className="grid h-full place-items-center font-display text-sm font-black">{p.name.slice(0, 1)}</span>}
+          </span>
+          <span className="leading-tight">
+            <span className="block max-w-[90px] truncate font-display text-sm font-bold uppercase">{shortName(p.name)}</span>
+            <span className="block text-[9px] font-semibold uppercase tracking-wide text-muted-foreground">Lvl 18 · {look.position}</span>
+          </span>
+        </button>
       </div>
+      {edit && <ProfileEditor onClose={() => setEdit(false)} />}
       <div className="flex items-center gap-2">
         <Pill icon={<Zap className="size-3.5 fill-xp text-xp" />} value="12,480" />
         <Pill icon={<Gem className="size-3.5 text-credit" />} value="3/5" sub="1:42" />
