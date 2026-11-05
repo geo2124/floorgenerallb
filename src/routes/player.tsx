@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Shell, SectionTitle, Bar } from "@/components/game/Shell";
-import hero from "@/assets/player-hero.jpg";
+import { Avatar } from "@/components/game/Avatar";
+import { Locker } from "@/components/game/Locker";
 import { attributes } from "@/lib/game-data";
-import { Clock, Zap, Play, Gem, X } from "lucide-react";
+import { Clock, Zap, Play, Gem, X, Shirt } from "lucide-react";
 
 export const Route = createFileRoute("/player")({
   head: () => ({
@@ -21,20 +22,36 @@ export const Route = createFileRoute("/player")({
 
 function PlayerPage() {
   const [sel, setSel] = useState<(typeof attributes)[number] | null>(null);
+  const [locker, setLocker] = useState(false);
   return (
     <Shell>
-      <section className="relative -mx-4 flex h-72 overflow-hidden">
-        <img src={hero} alt="" width={768} height={1152} className="absolute right-0 h-full w-2/3 object-cover object-top" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
-        <div className="relative z-10 flex flex-col justify-end p-4">
-          <div className="text-xs font-bold uppercase tracking-[0.3em] text-primary">Point Guard</div>
-          <div className="font-display text-7xl font-black leading-none text-gradient-gold">78</div>
-          <div className="text-xs font-semibold uppercase text-muted-foreground">Overall rating</div>
-          <div className="mt-3 flex gap-2 text-[11px] font-bold">
-            {["6'3\"", "190 lb", "Age 24"].map((t) => <span key={t} className="rounded-full border bg-surface px-2 py-1">{t}</span>)}
+      <Avatar className="-mx-4 h-[520px]" priority>
+        <div className="flex h-full flex-col justify-between p-4">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="text-xs font-bold uppercase tracking-[0.3em] text-primary">Point Guard</div>
+              <div className="font-display text-7xl font-black leading-none text-gradient-gold">78</div>
+              <div className="text-[10px] font-semibold uppercase text-muted-foreground">Overall</div>
+            </div>
+            <div className="space-y-1.5">
+              {attributes.slice(0, 4).map((a) => (
+                <div key={a.key} className="glass flex w-20 items-center justify-between rounded-lg border px-2 py-1 text-[11px] font-bold">
+                  <span className="text-muted-foreground">{a.key}</span><span>{a.level}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex items-end justify-between">
+            <div className="flex gap-1.5 text-[11px] font-bold">
+              {["6'3\"", "190 lb", "24"].map((t) => <span key={t} className="glass rounded-full border px-2 py-1">{t}</span>)}
+            </div>
+            <button onClick={() => setLocker(true)} className="flex items-center gap-1.5 rounded-full bg-gradient-primary px-4 py-2.5 font-display text-sm font-black uppercase text-primary-foreground shadow-glow">
+              <Shirt className="size-4" />Customize
+            </button>
           </div>
         </div>
-      </section>
+      </Avatar>
+      {locker && <Locker onClose={() => setLocker(false)} />}
 
       <div className="mt-2 rounded-2xl border border-primary/40 bg-primary/10 p-3">
         <div className="flex items-center justify-between text-sm font-bold"><span>Training · 3PT → 74</span><span className="flex items-center gap-1 text-primary"><Clock className="size-3.5" />1h 24m</span></div>
