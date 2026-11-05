@@ -101,7 +101,7 @@ const feed = ["Arakji pulls up from deep — BANG! 3PT", "Steal on the perimeter
 function Match({ team, onClose }: { team: boolean; onClose: () => void }) {
   const [t, setT] = useState(0);
   const [q, setQ] = useState(1);
-  const [score, setScore] = useState([0, 0]);
+  const [score, setScore] = useState<[number, number]>([0, 0]);
   const [log, setLog] = useState<string[]>([]);
   const [brk, setBrk] = useState(false);
 
@@ -112,7 +112,7 @@ function Match({ team, onClose }: { team: boolean; onClose: () => void }) {
         if (x >= 89) { setBrk(true); return 0; }
         return x + 6;
       });
-      setScore(([a, b]) => [a + (Math.random() > 0.45 ? Math.ceil(Math.random() * 3) : 0), b + (Math.random() > 0.5 ? Math.ceil(Math.random() * 3) : 0)]);
+      setScore(([a, b]): [number, number] => [a + (Math.random() > 0.45 ? Math.ceil(Math.random() * 3) : 0), b + (Math.random() > 0.5 ? Math.ceil(Math.random() * 3) : 0)]);
       setLog((l) => [feed[Math.floor(Math.random() * feed.length)], ...l].slice(0, 4));
     }, 450);
     return () => clearInterval(id);
