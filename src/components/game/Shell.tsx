@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, User, Target, Swords, BookImage, Zap, Gem, Plus } from "lucide-react";
+import { Home, User, Target, Swords, Shield, Zap, Gem, Plus } from "lucide-react";
 import type { ReactNode } from "react";
 
 const tabs = [
@@ -7,7 +7,7 @@ const tabs = [
   { to: "/player", label: "Player", icon: User },
   { to: "/play", label: "Play", icon: Swords, center: true },
   { to: "/predict", label: "Earn", icon: Target },
-  { to: "/album", label: "Album", icon: BookImage },
+  { to: "/club", label: "Club", icon: Shield },
 ] as const;
 
 export function Shell({ children }: { children: ReactNode }) {
