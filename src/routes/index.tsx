@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Shell, SectionTitle, Bar } from "@/components/game/Shell";
-import hero from "@/assets/player-hero.jpg";
+import { Avatar } from "@/components/game/Avatar";
 import { attributes, games } from "@/lib/game-data";
 import { Clock, Gift, Swords, Users, Target, Brain, ChevronRight, Play } from "lucide-react";
 
@@ -22,9 +22,7 @@ function Home() {
   return (
     <Shell>
       {/* Hero player */}
-      <section className="relative -mx-4 h-[460px] overflow-hidden">
-        <img src={hero} alt="Your player" width={768} height={1152} className="absolute inset-0 h-full w-full object-cover object-top" />
-        <div className="absolute inset-0 bg-fade" />
+      <Avatar className="-mx-4 h-[480px]" priority>
         <div className="absolute left-4 top-4 rounded-full glass border px-3 py-1 text-[11px] font-bold uppercase tracking-wider">
           <span className="mr-1.5 inline-block size-2 animate-pulse rounded-full bg-success" />Next match in 12:40
         </div>
@@ -39,7 +37,7 @@ function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </Avatar>
 
       {/* Training in progress */}
       <div className="mt-4 flex items-center gap-3 rounded-2xl border bg-surface p-3">
