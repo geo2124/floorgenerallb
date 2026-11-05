@@ -150,3 +150,12 @@
   background: conic-gradient(from var(--angle), var(--frame-a), var(--frame-b), var(--frame-a), var(--frame-c), var(--frame-a));
   animation: spin-border 4s linear infinite;
 }
+
+@utility inp {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  padding: 0.75rem;
+  outline: none;
+}
