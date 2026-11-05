@@ -196,15 +196,15 @@ function Slider({ label, lo, hi, v, on }: { label: string; lo: string; hi: strin
 /** Tiny body diagram highlighting the chosen limb(s). Player's left = viewer's right. */
 function BodyMini({ kind, side }: { kind: "arm" | "leg"; side: Side }) {
   const L = side === "left" || side === "both", R = side === "right" || side === "both";
-  const c = (on: boolean) => (on ? "var(--primary)" : "var(--muted)");
+  const c = (on: boolean) => (on ? "var(--primary)" : "color-mix(in oklab, var(--muted-foreground) 40%, transparent)");
   return (
     <svg width="34" height="40" viewBox="0 0 34 40" aria-hidden>
-      <circle cx="17" cy="5" r="4" fill="var(--muted)" />
-      <rect x="11" y="10" width="12" height="14" rx="3" fill="var(--muted)" />
-      <rect x="5" y="11" width="5" height="13" rx="2.5" fill={kind === "arm" ? c(R) : "var(--muted)"} />
-      <rect x="24" y="11" width="5" height="13" rx="2.5" fill={kind === "arm" ? c(L) : "var(--muted)"} />
-      <rect x="11" y="25" width="5" height="14" rx="2.5" fill={kind === "leg" ? c(R) : "var(--muted)"} />
-      <rect x="18" y="25" width="5" height="14" rx="2.5" fill={kind === "leg" ? c(L) : "var(--muted)"} />
+      <circle cx="17" cy="5" r="4" fill="color-mix(in oklab, var(--muted-foreground) 40%, transparent)" />
+      <rect x="11" y="10" width="12" height="14" rx="3" fill="color-mix(in oklab, var(--muted-foreground) 40%, transparent)" />
+      <rect x="5" y="11" width="5" height="13" rx="2.5" fill={kind === "arm" ? c(R) : "color-mix(in oklab, var(--muted-foreground) 40%, transparent)"} />
+      <rect x="24" y="11" width="5" height="13" rx="2.5" fill={kind === "arm" ? c(L) : "color-mix(in oklab, var(--muted-foreground) 40%, transparent)"} />
+      <rect x="11" y="25" width="5" height="14" rx="2.5" fill={kind === "leg" ? c(R) : "color-mix(in oklab, var(--muted-foreground) 40%, transparent)"} />
+      <rect x="18" y="25" width="5" height="14" rx="2.5" fill={kind === "leg" ? c(L) : "color-mix(in oklab, var(--muted-foreground) 40%, transparent)"} />
     </svg>
   );
 }
