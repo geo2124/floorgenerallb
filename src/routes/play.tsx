@@ -4,7 +4,8 @@ import { Shell, SectionTitle } from "@/components/game/Shell";
 import { PlayerCard } from "@/components/game/PlayerCard";
 import { cards } from "@/lib/game-data";
 import court from "@/assets/court.jpg";
-import { Bot, Swords, Users, Timer, Pause } from "lucide-react";
+import { Bot, Swords, Users, Timer, Pause, ArrowLeftRight } from "lucide-react";
+import { Avatar } from "@/components/game/Avatar";
 
 export const Route = createFileRoute("/play")({
   head: () => ({
@@ -81,7 +82,7 @@ function Play() {
         <div className="font-sans text-xs font-semibold normal-case opacity-80">Win +180 XP · Lose −90 XP</div>
       </button>
 
-      {match && <Match team={mode === "team"} onClose={() => setMatch(false)} />}
+      {match && <Match team={mode === "team"} initial={{ three, def3, pace }} onClose={() => setMatch(false)} />}
     </Shell>
   );
 }
@@ -96,34 +97,70 @@ function Split({ label, left, right, value, onChange }: { label: string; left: s
   );
 }
 
-const feed = ["Arakji pulls up from deep — BANG! 3PT", "Steal on the perimeter, fast break layup", "Contested mid-range… off the rim", "Crossover, step-back three — GOOD!", "Block at the rim!"];
+type Strat = { three: number; def3: number; pace: number };
+const feed = ["Pull-up from deep — BANG! 3PT", "Steal on the perimeter, fast break layup", "Contested mid-range… off the rim", "Crossover, step-back three — GOOD!", "Block at the rim!", "Drive and kick, corner three — GOOD!"];
+const starters0 = [["PG", "You"], ["SG", "Amir_S"], ["SF", "Ali.H"], ["PF", "Karim_Z"], ["C", "Hayk_G"]];
+const bench0 = [["G", "Nadim_7"], ["F", "Rami.B"], ["C", "JadTower"]];
 
-function Match({ team, onClose }: { team: boolean; onClose: () => void }) {
+function Match({ team, onClose, initial }: { team: boolean; onClose: () => void; initial: Strat }) {
   const [t, setT] = useState(0);
   const [q, setQ] = useState(1);
   const [score, setScore] = useState<[number, number]>([0, 0]);
   const [log, setLog] = useState<string[]>([]);
-  const [brk, setBrk] = useState(false);
+  const [panel, setPanel] = useState<null | "break" | "timeout">(null);
+  const [timeouts, setTimeouts] = useState(2);
+  const [strat, setStrat] = useState<Strat>(initial);
+  const [count, setCount] = useState(30);
+  const [starters, setStarters] = useState(starters0);
+  const [bench, setBench] = useState(bench0);
+  const [subSel, setSubSel] = useState<number | null>(null);
+  const done = q > 4;
 
   useEffect(() => {
-    if (brk || q > 4) return;
+    if (panel || done) return;
     const id = setInterval(() => {
       setT((x) => {
-        if (x >= 89) { setBrk(true); return 0; }
+        if (x >= 84) { setPanel("break"); setCount(30); return 0; }
         return x + 6;
       });
-      setScore(([a, b]): [number, number] => [a + (Math.random() > 0.45 ? Math.ceil(Math.random() * 3) : 0), b + (Math.random() > 0.5 ? Math.ceil(Math.random() * 3) : 0)]);
+      // strategy influences scoring: more 3s = higher variance, faster pace = more possessions
+      const shotChance = 0.42 + strat.pace / 500;
+      const pts = Math.random() < strat.three / 100 ? 3 : 2;
+      setScore(([a, b]): [number, number] => [a + (Math.random() < shotChance ? pts : 0), b + (Math.random() < 0.45 + (100 - strat.def3) / 600 ? (Math.random() > 0.5 ? 3 : 2) : 0)]);
       setLog((l) => [feed[Math.floor(Math.random() * feed.length)] ?? "", ...l].slice(0, 4));
     }, 450);
     return () => clearInterval(id);
-  }, [brk, q]);
+  }, [panel, done, strat]);
 
-  const done = q > 4;
+  useEffect(() => {
+    if (!panel) return;
+    if (count <= 0) { resume(); return; }
+    const id = setTimeout(() => setCount((c) => c - 1), 1000);
+    return () => clearTimeout(id);
+  });
+
+  function resume() {
+    if (panel === "break") setQ((x) => x + 1);
+    setPanel(null);
+    setSubSel(null);
+  }
+
+  function sub(benchIdx: number) {
+    if (subSel === null) return;
+    const s = [...starters], b = [...bench];
+    const out = s[subSel]!, inn = b[benchIdx]!;
+    s[subSel] = [out[0]!, inn[1]!];
+    b[benchIdx] = [inn[0]!, out[1]!];
+    setStarters(s); setBench(b); setSubSel(null);
+    setLog((l) => [`SUB: ${inn[1]} in for ${out[1]}`, ...l].slice(0, 4));
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex justify-center bg-background">
       <div className="relative flex w-full max-w-[440px] flex-col overflow-hidden">
         <img src={court} alt="" width={768} height={1152} className="absolute inset-0 h-full w-full object-cover opacity-40" />
-        <div className="relative z-10 flex flex-1 flex-col p-5">
+        {!team && <div className="absolute inset-x-0 bottom-0 h-[70%] opacity-50"><Avatar className="h-full" /></div>}
+        <div className="relative z-10 flex flex-1 flex-col overflow-y-auto p-5">
           <div className="flex items-center justify-between rounded-2xl glass border p-4">
             <div className="text-center"><div className="text-xs font-bold text-primary">YOU</div><div className="font-display text-5xl font-black">{score[0]}</div></div>
             <div className="text-center">
@@ -133,29 +170,73 @@ function Match({ team, onClose }: { team: boolean; onClose: () => void }) {
             <div className="text-center"><div className="text-xs font-bold text-accent">{team ? "CEDARS FC" : "RIVAL_91"}</div><div className="font-display text-5xl font-black">{score[1]}</div></div>
           </div>
           <div className="mt-2 h-1 overflow-hidden rounded-full bg-surface-2"><div className="h-full bg-gradient-primary transition-all" style={{ width: `${(t / 90) * 100}%` }} /></div>
-
-          <div className="mt-auto space-y-2">
-            {log.map((l, i) => <div key={l + i} className="animate-rise rounded-xl glass border px-3 py-2 text-sm font-semibold" style={{ opacity: 1 - i * 0.22 }}>{l}</div>)}
+          <div className="mt-2 flex justify-center gap-2 text-[10px] font-bold uppercase">
+            <span className="rounded-full glass border px-2 py-0.5">3PT {strat.three}%</span>
+            <span className="rounded-full glass border px-2 py-0.5">D-3s {strat.def3}%</span>
+            <span className="rounded-full glass border px-2 py-0.5">Pace {strat.pace}</span>
           </div>
 
-          {team && !brk && !done && <button className="mt-4 flex items-center justify-center gap-2 rounded-2xl border bg-surface py-3 text-sm font-bold"><Pause className="size-4" />Timeout (2 left)</button>}
+          {!panel && (
+            <div className="mt-auto space-y-2 pt-6">
+              {log.map((l, i) => <div key={l + i} className="animate-rise rounded-xl glass border px-3 py-2 text-sm font-semibold" style={{ opacity: 1 - i * 0.22 }}>{l}</div>)}
+            </div>
+          )}
 
-          {brk && !done && (
+          {team && !panel && !done && (
+            <button disabled={!timeouts} onClick={() => { setTimeouts((x) => x - 1); setPanel("timeout"); setCount(30); }}
+              className="mt-4 flex items-center justify-center gap-2 rounded-2xl border bg-surface py-3 text-sm font-bold disabled:opacity-40">
+              <Pause className="size-4" />Call timeout ({timeouts} left)
+            </button>
+          )}
+
+          {panel && !done && (
             <div className="mt-4 animate-rise rounded-2xl border border-primary bg-surface p-4">
-              <div className="flex justify-between font-display text-xl font-black uppercase"><span>End of Q{q}</span><span className="text-primary">0:30</span></div>
-              <p className="mb-3 text-xs text-muted-foreground">Adjust strategy{team ? " or sub players" : ""} before the next quarter.</p>
-              <button onClick={() => { setBrk(false); setQ(q + 1); }} className="w-full rounded-xl bg-gradient-primary py-3 font-display text-lg font-black uppercase text-primary-foreground">{q === 4 ? "See result" : `Start Q${q + 1}`}</button>
+              <div className="flex items-center justify-between">
+                <span className="font-display text-xl font-black uppercase">{panel === "timeout" ? "Timeout" : `End of Q${q}`}</span>
+                <span className={`font-display text-2xl font-black ${count <= 10 ? "text-destructive" : "text-primary"}`}>0:{String(count).padStart(2, "0")}</span>
+              </div>
+              <div className="my-2 h-1 overflow-hidden rounded-full bg-surface-2"><div className="h-full bg-primary transition-all duration-1000" style={{ width: `${(count / 30) * 100}%` }} /></div>
+
+              <div className="space-y-4 py-2">
+                <Split label="Shot selection" left="3PT" right="Mid" value={strat.three} onChange={(v) => setStrat({ ...strat, three: v })} />
+                <Split label="Defensive focus" left="Guard 3s" right="Protect paint" value={strat.def3} onChange={(v) => setStrat({ ...strat, def3: v })} />
+                <Split label="Tempo" left="Fast" right="Slow" value={strat.pace} onChange={(v) => setStrat({ ...strat, pace: v })} />
+              </div>
+
+              {team && (
+                <div className="mt-2">
+                  <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">Substitutions {subSel !== null ? "· pick bench player" : "· tap a starter"}</div>
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {starters.map(([p, n], i) => (
+                      <button key={p} onClick={() => setSubSel(subSel === i ? null : i)} className={`rounded-xl border p-1.5 text-center ${subSel === i ? "border-primary bg-primary/15" : "bg-surface-2"}`}>
+                        <div className="font-display text-sm font-black">{p}</div><div className="truncate text-[9px]">{n}</div>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-1.5 grid grid-cols-3 gap-1.5">
+                    {bench.map(([p, n], i) => (
+                      <button key={i} disabled={subSel === null} onClick={() => sub(i)} className={`flex items-center justify-center gap-1 rounded-xl border border-dashed py-2 text-xs font-bold ${subSel !== null ? "border-accent text-accent" : "opacity-60"}`}>
+                        <ArrowLeftRight className="size-3" />{p} · {n}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <button onClick={resume} className="mt-4 w-full rounded-xl bg-gradient-primary py-3 font-display text-lg font-black uppercase text-primary-foreground">
+                {panel === "timeout" ? "Resume play" : q === 4 ? "See result" : `Start Q${q + 1}`}
+              </button>
             </div>
           )}
 
           {done && (
-            <div className="mt-4 animate-pop rounded-2xl bg-surface p-5 text-center">
+            <div className="mt-auto animate-pop rounded-2xl bg-surface p-5 text-center">
               <div className={`font-display text-5xl font-black uppercase ${score[0] >= score[1] ? "text-gradient-gold" : "text-destructive"}`}>{score[0] >= score[1] ? "Victory" : "Defeat"}</div>
               <div className="my-2 font-bold">{score[0] >= score[1] ? "+180 XP" : "−90 XP"}</div>
               <button onClick={onClose} className="w-full rounded-xl bg-gradient-primary py-3 font-display text-lg font-black uppercase text-primary-foreground">Continue</button>
             </div>
           )}
-          {!done && !brk && <button onClick={onClose} className="mt-3 text-xs text-muted-foreground">Leave match</button>}
+          {!done && !panel && <button onClick={onClose} className="mt-3 text-xs text-muted-foreground">Leave match</button>}
         </div>
       </div>
     </div>
