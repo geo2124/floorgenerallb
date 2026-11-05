@@ -49,7 +49,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
 function TopBar() {
   return (
-    <header className="glass sticky top-0 z-30 flex items-center justify-between border-b px-4 py-3">
+    <header className="glass z-30 flex shrink-0 items-center justify-between border-b px-4 py-3">
       <div className="flex items-center gap-2">
         <div className="grid size-9 place-items-center rounded-xl bg-gradient-primary font-display text-lg font-black text-primary-foreground">FG</div>
         <div className="leading-tight">

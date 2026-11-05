@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Shell, SectionTitle } from "@/components/game/Shell";
 import { TeamLogo, logoShapes, logoIcons, logoColors, type LogoSpec } from "@/components/game/TeamLogo";
-import { Crown, UserMinus, Check, X, LogOut, Search, Shuffle, Trophy, Palette, Plus, Clock, Users } from "lucide-react";
+import { Crown, UserMinus, Check, X, LogOut, Search, Shuffle, Trophy, Palette, Plus, Clock, Users, Swords } from "lucide-react";
 
 export const Route = createFileRoute("/club")({
   head: () => ({
@@ -226,7 +226,7 @@ function Club() {
   );
 }
 
-function Swords2() { return <Shuffle className="mr-1 inline size-4" />; }
+function Swords2() { return <Swords className="mr-1 inline size-4" />; }
 function Ovr({ v }: { v: number }) {
   return <div className="grid size-10 place-items-center rounded-xl bg-surface-2 font-display text-lg font-black">{v}</div>;
 }
