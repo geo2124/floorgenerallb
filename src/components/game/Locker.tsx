@@ -40,7 +40,7 @@ export function Locker({ onClose }: { onClose: () => void }) {
   );
 }
 
-function Tile({ active, onClick, img, label, sub, zoom }: { active: boolean; onClick: () => void; img: string; label: string; sub?: string; zoom?: boolean }) {
+function Tile({ active, onClick, img, label, sub, zoom }: { active: boolean; onClick: () => void; img: string; label: string; sub?: string | undefined; zoom?: boolean }) {
   return (
     <button onClick={onClick} className={`relative overflow-hidden rounded-2xl border-2 bg-surface-2 text-left transition active:scale-95 ${active ? "border-primary shadow-glow" : "border-transparent"}`}>
       <div className="aspect-square overflow-hidden">
