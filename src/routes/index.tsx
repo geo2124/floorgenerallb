@@ -63,7 +63,7 @@ function Home() {
       <SectionTitle title="Game modes" />
       <div className="grid grid-cols-2 gap-3">
         <Mode to="/play" icon={<Swords />} title="1 v 1" sub="Ranked duel" hot />
-        <Mode to="/play" icon={<Users />} title="Team" sub="5v5 · Coach mode" />
+        <Mode to="/club" icon={<Users />} title="Club" sub="Team · Leagues" />
         <Mode to="/predict" icon={<Target />} title="Predict" sub="Live LBL games" />
         <Mode to="/trivia" icon={<Brain />} title="Trivia" sub="4 topics" />
       </div>
@@ -93,7 +93,7 @@ function Home() {
   );
 }
 
-function Mode({ to, icon, title, sub, hot }: { to: "/play" | "/predict" | "/trivia"; icon: React.ReactNode; title: string; sub: string; hot?: boolean }) {
+function Mode({ to, icon, title, sub, hot }: { to: "/play" | "/predict" | "/trivia" | "/club"; icon: React.ReactNode; title: string; sub: string; hot?: boolean }) {
   return (
     <Link to={to} className="relative overflow-hidden rounded-2xl border bg-surface p-4 transition active:scale-95">
       {hot && <span className="absolute right-2 top-2 rounded-full bg-destructive px-2 py-0.5 text-[9px] font-black uppercase">Hot</span>}
