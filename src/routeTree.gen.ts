@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AlbumRouteImport } from './routes/album'
+import { Route as ClubRouteImport } from './routes/club'
 import { Route as PlayRouteImport } from './routes/play'
 import { Route as PlayerRouteImport } from './routes/player'
 import { Route as PredictRouteImport } from './routes/predict'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const AlbumRoute = AlbumRouteImport.update({
   id: '/album',
   path: '/album',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClubRoute = ClubRouteImport.update({
+  id: '/club',
+  path: '/club',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlayRoute = PlayRouteImport.update({
@@ -50,6 +56,7 @@ const TriviaRoute = TriviaRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/album': typeof AlbumRoute
+  '/club': typeof ClubRoute
   '/play': typeof PlayRoute
   '/player': typeof PlayerRoute
   '/predict': typeof PredictRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/album': typeof AlbumRoute
+  '/club': typeof ClubRoute
   '/play': typeof PlayRoute
   '/player': typeof PlayerRoute
   '/predict': typeof PredictRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/album': typeof AlbumRoute
+  '/club': typeof ClubRoute
   '/play': typeof PlayRoute
   '/player': typeof PlayerRoute
   '/predict': typeof PredictRoute
@@ -74,15 +83,25 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/album' | '/play' | '/player' | '/predict' | '/trivia'
+  fullPaths:
+    '/' | '/album' | '/club' | '/play' | '/player' | '/predict' | '/trivia'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/album' | '/play' | '/player' | '/predict' | '/trivia'
-  id: '__root__' | '/' | '/album' | '/play' | '/player' | '/predict' | '/trivia'
+  to: '/' | '/album' | '/club' | '/play' | '/player' | '/predict' | '/trivia'
+  id:
+    | '__root__'
+    | '/'
+    | '/album'
+    | '/club'
+    | '/play'
+    | '/player'
+    | '/predict'
+    | '/trivia'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AlbumRoute: typeof AlbumRoute
+  ClubRoute: typeof ClubRoute
   PlayRoute: typeof PlayRoute
   PlayerRoute: typeof PlayerRoute
   PredictRoute: typeof PredictRoute
@@ -103,6 +122,13 @@ declare module '@tanstack/react-router' {
       path: '/album'
       fullPath: '/album'
       preLoaderRoute: typeof AlbumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/club': {
+      id: '/club'
+      path: '/club'
+      fullPath: '/club'
+      preLoaderRoute: typeof ClubRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/play': {
@@ -139,6 +165,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AlbumRoute: AlbumRoute,
+  ClubRoute: ClubRoute,
   PlayRoute: PlayRoute,
   PlayerRoute: PlayerRoute,
   PredictRoute: PredictRoute,
